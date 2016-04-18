@@ -1,0 +1,20 @@
+﻿package com.jiaoyou.youwo.php;
+
+import com.jiaoyou.youwo.php.PhpHttpBuild.PHPCallBack;
+import com.jiaoyou.youwo.php.bean.Login;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+
+public class @class_name {
+	public static void Send(<<pck_vars>>, PHPCallBack phpCallBack)
+	{
+		PhpHttpBuild phpHttpBuild = PhpHttpBuild.Build();
+		phpHttpBuild.setHttpMethod(HttpMethod.GET);
+		phpHttpBuild.setUrl("@class_url");
+		<<pck_contain>>
+		phpHttpBuild.send(phpCallBack, @class_resp.class);
+	}
+}
+<<<pck_vars>>>
+String @vars_name
+<<pck_contain>>
+phpHttpBuild.add("@vars_name",@vars_name);

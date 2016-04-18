@@ -1,0 +1,19 @@
+package com.jiaoyou.youwo.php.bean;
+
+import com.lidroid.xutils.db.annotation.Id;
+import com.lidroid.xutils.db.annotation.NoAutoIncrement;
+/**
+*@desc
+*/ 
+public class @class_name extends BasePhpBean{
+
+	/**
+<<desc>>	 
+	 */
+<<vars>>
+	
+<<<vars>>>
+	public @vars_class @vars_name;
+
+<<<desc>>>
+	@vars_desc;

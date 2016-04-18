@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<metalib tagsetversion="1" name="client" version="1" >
+
+  <macro name="ACCESS_PASSWORD_LEN"           value="32"    desc="玩家密码最大长度" />
+  <macro name="ACCESS_NAME_LEN"               value="16"    desc="玩家名称最大长度" />
+  <macro name="ACCESS_LOGON_NAME_LEN"         value="16"    desc="用户名最大长度" />
+  <macro name="ACCESS_CHAT_MSG_MAX_LEN"       value="500"   desc="聊天一条消息最大长度" />
+  <macro name="ACCESS_NICK_NAME_LEN"    	  value="32"    desc="用户昵称最大长度"/>
+  <macro name="TRADE_TOPIC_LEN"                 value="64"    desc="订单主题最大长度"/>
+  <macro name="TRADE_POSINFO_LEN"               value="128"   desc="详细地址最大长度"/>
+  <macro name="TRADE_PARTICULARS_LEN"           value="512"   desc="详细描述最大长度"/>
+  <macro name="TRADE_INFONUM_OF_PAG"           value="20"   desc="一页订单最多订单数量"/>
+
+  <!--系统命令字-->
+  <macrosgroup name="Cmds">
+    <macro name="CMD_HEARTBEAT_REQ"                        value="1"           desc="心跳请求" />
+    <macro name="CMD_HEARTBEAT_RESP"                       value="2"           desc="心跳请求返回" />
+
+    <!--1000 - 2000 GAS-->
+
+    <macro name="CMD_VC_CODE_REQ"                        value="1003"           desc="注册验证码请求" />
+    <macro name="CMD_VC_CODE_RESP"                       value="1004"           desc="注册验证码请求返回" />
+
+    <macro name="CMD_REGISTER_REQ"                        value="1005"           desc="注册账号请求" />
+    <macro name="CMD_REGISTER_RESP"                       value="1006"           desc="注册账号返回" />
+
+    <macro name="CMD_NAME_LOGON_REQ"                        value="1007"           	desc="用户名登录请求" />
+    <macro name="CMD_NAME_LOGON_RESP"                       value="1008"           	desc="用户名登录返回" />
+
+    <macro name="CMD_BASE_INFO_REQ"						value="1009"					desc="用户基本信息请求"/>
+    <macro name="CMD_BASE_INFO_RESP"						value="1010"					desc="用户基本信息应答"/>
+
+    <macro name="CMD_UPDATE_BASE_INFO_REQ"						value="1011"					desc="用户更新基本信息请求"/>
+    <macro name="CMD_UPDATE_BASE_INFO_RESP"						value="1012"					desc="用户基更新本信息应答"/>
+
+    <!--2000 - 3000 Trade-->
+    <macro name="CLIENT_REQUEST_ACCESS_TRADE_MIN"                           value="2000"      desc="客户端请求网关交易服务器最小协议号(不包含本身)"/>
+
+    <macro name="CLIENT_REQUEST_ACCESS_TRADE_CREATE_ORDER"                  value="2007"      desc="客户端请求网关交易服务器创建订单"/>
+    <macro name="TRADE_RSPONSE_ACCESS_CLIENT_CREATE_ORDER"                  value="2008"      desc="交易服务器回应网关客户端创建订单"/>
+
+    <macro name="CLIENT_REQUEST_ACCESS_TRADE_SELECT_ORDER_BASIC_INFO"       value="2009"      desc="客户端请求网关交易服务器查询订单基本信息" />
+    <macro name="TRADE_RSPONSE_ACCESS_CLIENT_SELECT_ORDER_BASIC_INFO"       value="2010"      desc="交易服务器回应网关客户端查询订单基本信息" />
+
+    <macro name="CLIENT_REQUEST_ACCESS_TRADE_SELECT_ORDER_SPECIFIC_INFO"    value="2011"      desc="客户端请求网关交易服务器查询订单详细信息" />
+    <macro name="TRADE_RSPONSE_ACCESS_CLIENT_SELECT_ORDER_SPECIFIC_INFO"    value="2012"      desc="交易服务器回应网关客户端查询订单详细信息" />
+
+    <macro name="CLIENT_REQUEST_ACCESS_TRADE_MAX"                           value="3000"      desc="客户端请求网关交易服务器最大协议号(不包含本身)"/>
+
+    <!--聊天模块begin-->
+    <macro name="CMD_CHAT_LOGON_REQ"                        value="3001"           	desc="用户登录聊天服务器请求" />
+    <macro name="CMD_CHAT_LOGON_RESP"                       value="3002"           	desc="用户登录聊天服务器返回" />
+
+    <macro name="CMD_CHAT_SEND_MSG_REQ"                        value="3003"           	desc="用户发聊天消息请求" />
+    <macro name="CMD_CHAT_SEND_MSG_RESP"                       value="3004"           	desc="用户发聊天消息返回" />
+
+    <macro name="CMD_CHATSVR_FORWARD_MSG"                        value="3005"           	desc="聊天服务器转发聊天消息" />
+    <!--macro name="CMD_CHATSVR_FORWARD_MSG_RESP"                       value="3006"           	desc="聊天服务器转发聊天消息 响应" / -->
+    <!--聊天模块end-->
+  </macrosgroup>
+
+
+  <!--验证码协议相关结构-->
+  <struct name="ClientVcCodeReq" version="1">
+    <entry name="PhoneNum"         type="int64"        desc="电话号码" />
+  </struct>
+
+  <struct name="ClientVcCodeResp" version="1">
+    <entry name="Result"           type="int32"        desc="结果" />
+  </struct>
+
+  <!--注册协议相关结构-->
+  <struct name="ClientRegisterReq" version="1">
+    <entry name="PhoneNum"      type="int64"       desc="电话号码" />
+    <entry name="VcCode"        type="int32"       desc="验证码" />
+    <entry name="NameLen"       type="int32"        desc="名称长度" />
+    <entry name="Name"          type="char"         count="ACCESS_NAME_LEN"    refer="NameLen"        desc="名称" />
+    <entry name="PwLen"         type="int32"        desc="密码长度" />
+    <entry name="PassWord"      type="char"         count="ACCESS_PASSWORD_LEN"    refer="PwLen"        desc="密码" />
+  </struct>
+
+  <struct name="ClientRegisterResp" version="1">
+    <entry name="Result"           type="int32"        desc="结果" />
+  </struct>
+
+  <!-- 客户端用户名密码登录 -->
+  <struct name="ClientNameLogonReq" version="1"    desc="用户名密码登录请求">
+    <entry name="NameLen"       type="int32"        desc="用户名长度" />
+    <entry name="Name"			    type="char"			    count="ACCESS_LOGON_NAME_LEN"      refer="NameLen"    desc="用户名" />
+    <entry name="PwLen"         type="int32"        desc="密码长度" />
+    <entry name="Password"      type="char"         count="ACCESS_PASSWORD_LEN"        refer="PwLen"      desc="密码" />
+  </struct>
+
+  <struct name="ClientNameLogonResp" version="1"   desc="用户名登录应答">
+    <entry name="Result"        type="int32"          desc="结果" />
+    <entry name="Uid"			type="int64"          desc="用户id" />
+  </struct>
+	
+	<!-- 客户端请求基本信息 -->
+	<struct name="ClientBaseInfoReq" version="1"   desc="基本信息请求">
+		<entry name="magicFig"        type="int8"          desc="随便给个魔法数字，协议不能为空" />
+	</struct>
+	<!-- 客户端请求基本信息响应 -->
+	<struct name="ClientBaseInfoResp" version="1"   desc="基本信息响应">
+		<entry name="Result"			type="int32"			desc="结果"/>
+		<entry name="Adapted"        type="int8"          desc="是填充过基本信息0:未填充，1: 已填充" />
+		<entry name="Gender"        type="int8"        desc="性别" />
+    	<entry name="Birthday"      type="int64"       desc="生日" />
+    	<entry name="Portrait"      type="int64"       desc="头像" />
+    	<entry name="NameLen"       type="int32"        desc="名称长度" />
+    	<entry name="Name"          type="char"         count="ACCESS_NAME_LEN"    refer="NameLen"        desc="名称" />
+    	<entry name="PwLen"         type="int32"        desc="密码长度" />
+    	<entry name="PassWord"      type="char"         count="ACCESS_PASSWORD_LEN"    refer="PwLen"        desc="密码" />
+    	<entry name="NickNameLen"   type="int32"     desc="昵称长度"/>
+    	<entry name="NickName"     type="char"         count="ACCESS_NICK_NAME_LEN"   refer="NickNameLen"   desc="昵称"/>
+	</struct>
+	<!-- 客户端更新基本信息 -->
+	<struct name="ClientUpdateBaseInfoReq" version="1"   desc="基本信息更新请求">
+		<entry name="Gender"        type="int8"        desc="性别" />
+    	<entry name="Birthday"      type="int64"       desc="生日" />
+    	<entry name="Portrait"      type="int64"       desc="头像" />
+    	<entry name="NickNameLen"   type="int32"     desc="昵称长度"/>
+    	<entry name="NickName"     type="char"         count="ACCESS_NICK_NAME_LEN"   refer="NickNameLen"   desc="昵称"/>
+	</struct>
+	<!-- 客户端更新基本信息响应 -->
+	<struct name="ClientUpdateBaseInfoResp" version="1"   desc="基本信息更新响应">
+		<entry name="Result"        type="int32"          desc="结果" />
+	</struct>
+  <!-- 用户登录聊天服务器 -->
+  <struct name="ClientChatLogonReq" version="1"    desc="用户登录聊天服务器">
+    <entry name="Data"       type="int32"        desc="保留字段" />
+  </struct>
+
+  <struct name="ClientChatLogonResp" version="1"   desc="用户登录聊天服务器返回">
+    <entry name="Result"        type="int32"          desc="结果" />
+  </struct>
+
+  <!-- 客户端发聊天消息 begin-->
+  <struct name="ClientChatSendMsgReq" version="1"    desc="用户发聊天消息请求">
+    <entry name="ReceiverID"        	type="int64"        desc="接受消息者的用户id" />
+    <entry name="MsgLen"        		type="int32"        desc="消息长度" />
+    <entry name="Message"       		type="char"         count="ACCESS_CHAT_MSG_MAX_LEN"        refer="MsgLen"      desc="消息体" />
+  </struct>
+
+  <struct name="ClientChatSendMsgResp" version="1"   desc="用户发聊天消息返回">
+    <entry name="Result"        type="int32"          desc="结果" />
+  </struct>
+  <!-- 客户端发聊天消息 end-->
+
+  <!-- 聊天服务器转发聊天消息 begin-->
+  <struct name="ClientChatsvrForwardMsg" version="1"    desc="聊天服务器转发聊天消息 请求">
+    <entry name="SenderID"        		type="int64"        desc="发送消息者的用户id" />
+    <entry name="MsgLen"        		type="int32"        desc="消息长度" />
+    <entry name="Message"       		type="char"         count="ACCESS_CHAT_MSG_MAX_LEN"        refer="MsgLen"      desc="消息体" />
+  </struct>
+
+  <struct name="ClientChatsvrForwardMsgResp" version="1"   desc="聊天服务器转发聊天消息 响应">
+    <entry name="Result"        type="int32"          desc="结果" />
+  </struct>
+  <!-- 聊天服务器转发聊天消息 end-->
+
+  <!--交易相关协议 -->
+  <struct name="ClientRequestAccessTradeCreateOrder" version="1" desc="客户端请求网关交易服务器创建订单">
+    <entry name="Type"            type="uint8"    desc="订单类型"/>
+    <entry name="TopicLen"        type="int32"    desc="主题长度"/>
+    <entry name="Topic"           type="char"     count="TRADE_TOPIC_LEN"    refer="TopicLen"        desc="主题"/>
+    <entry name="OverTime"        type="int32"    desc="订单结束报名时间"/>
+    <entry name="PosID"           type="int32"    desc="地区id"/>
+    <entry name="PosInfoLen"      type="int32"    desc="地区信息长度"/>
+    <entry name="PosInfo"         type="char"     count="TRADE_POSINFO_LEN"    refer="PosInfoLen"        desc="地区信息"/>
+    <entry name="TryMoney"        type="uint32"    desc="试金石"/>
+    <entry name="Gratuity"        type="uint32"    desc="小费"/>
+    <entry name="OfficialNum"     type="uint32"    desc="可参与人数"/>
+    <entry name="ParticularsLen"  type="int32"    desc="详细描述长度"/>
+    <entry name="Particulars"     type="char"     count="TRADE_PARTICULARS_LEN"    refer="ParticularsLen"        desc="详细描述"/>
+  </struct>
+  <struct name="TradeResponseAccessClientCreateOrder" version="1" desc="交易服务器回应网关客户端创建订单">
+    <entry name="Result"        type="int"    desc="返回状态"/>
+  </struct>
+
+  <struct name="OrderBasicInfoToClient"   version="1">
+    <entry name="Orderid"         type="int64"    desc="订单id"/>
+    <entry name="CreaterUid"      type="int64"    desc="创建者uid"/>
+    <entry name="Type"            type="uint8"    desc="订单类型"/>
+    <entry name="TopicLen"        type="int32"    desc="主题长度"/>
+    <entry name="Topic"           type="char"     count="TRADE_TOPIC_LEN"    refer="TopicLen"        desc="主题"/>
+    <entry name="OverTime"        type="int32"    desc="订单结束报名时间"/>
+    <entry name="PosID"           type="int32"    desc="地区id"/>
+    <entry name="PosInfoLen"      type="int32"    desc="地区信息长度"/>
+    <entry name="PosInfo"         type="char"     count="TRADE_POSINFO_LEN"    refer="PosInfoLen"        desc="地区信息"/>
+    <entry name="TryMoney"        type="uint32"    desc="试金石"/>
+    <entry name="Gratuity"        type="uint32"    desc="小费"/>
+    <entry name="ApplyNum"        type="uint32"    desc="已报名人数"/>
+    <entry name="DiscussNum"      type="uint32"    desc="评论次数"/>
+  </struct>
+  <struct name="ClientRequestAccessTradeSelectOrderBasicInfo" version="1" desc="客户端请求网关交易服务器查询订单基本信息">
+    <entry name="OrderType"       type="uint8"    desc="订单类型"/>
+    <entry name="SelectType"      type="uint8"    desc="查询类型"/>
+    <entry name="Pag"             type="uint8"    desc="查询页面" />
+  </struct>
+  <struct name="TradeResponseAccessClientSelectOrderBasicInfo" version="1" desc="交易服务器回应网关客户端查询订单基本信息">
+    <entry name="Result"                type="int"      desc="返回状态"/>
+    <entry name="InfoCount"             type="uint32"   desc="订单数量"/>
+    <entry name="OrderBasicInfoToClientList"    type="OrderBasicInfoToClient"     count="TRADE_INFONUM_OF_PAG"    refer="InfoCount"        desc="订单信息列表"/>
+  </struct>
+
+  <struct name="Apply_info" version="1">
+    <entry name="uid"             type="uint64"   desc="报名者id"/>
+    <entry name="status"          type="uint8"    desc="报名状态"/>
+  </struct>
+  <struct name="Apply_info_list" version="1">
+    <entry name="num"             type="uint32"     desc="报名者人数"/>
+    <entry name="Apply_info"      type="Apply_info"    count="100"  refer="num"  desc="报名者信息列表"/>
+  </struct>
+  <struct name="Discuss_info" version="1">
+    <entry name="discussid"       type="uint64"     desc="评论id"/>
+    <entry name="uid"             type="uint64"     desc="评论者id"/>
+    <entry name="time"            type="uint32"     desc="评论时间"/>
+    <entry name="content_len"     type="int32"      desc="评论内容长度" />
+    <entry name="content"         type="char"       count="512"    refer="content_len"        desc="评论内容" />
+  </struct>
+  <struct name="Discuss_info_list" version="1">
+    <entry name="num"           type="uint32"     desc="评论人数"/>
+    <entry name="Discuss_info"    type="Discuss_info"    count="1024"  refer="num"  desc="评论信息列表"/>
+  </struct>
+  <struct name="ClientRequestAccessTradeSelectOrderSpecificInfo" version="1" desc="客户端请求网关交易服务器查询订单详细信息">
+    <entry name="Orderid"         type="int64"          desc="订单id"/>
+  </struct>
+  <struct name="TradeResponseAccessClientSelectOrderSpecificInfo" version="1" desc="交易服务器回应网关客户端查询订单详细信息">
+    <entry name="Result"          type="int"                desc="返回状态"/>
+    <entry name="Orderid"         type="int64"              desc="订单id"/>
+    <entry name="OfficialNum"     type="uint32"             desc="可参与人数" />
+    <entry name="ParticularsLen"  type="int32"              desc="详细描述长度" />
+    <entry name="Particulars"     type="char"       count="512"    refer="ParticularsLen"        desc="详细描述" />
+    <entry name="ApplyInfoList"   type="Apply_info_list"    desc="报名者信息列表" />
+    <entry name="DiscussInfoList" type="Discuss_info_list"  desc="评论信息列表" />
+  </struct>
+
+  <!--客户端协议头-->
+  <struct name="ClientPkgHead" version="1">
+    <entry name="DataSize"          type="uint16"       desc="包长度" />
+    <entry name="CheckCode"         type="uint8"        defaultvalue="0" desc="校验字段" />
+    <entry name="MessageVer"        type="uint8"        defaultvalue="65" desc="版本标识" />
+    <entry name="CmdID"             type="uint32"       desc="命令字" />
+  </struct>
+
+  <!--客户端协议体-->
+  <union name="ClientPkgBody" version="1">
+
+    <!--获取验证码-->
+    <entry name="ClientVcCodeReq"       type="ClientVcCodeReq"        id="CMD_VC_CODE_REQ"        desc="获取验证码请求" />
+    <entry name="ClientVcCodeResp"      type="ClientVcCodeResp"       id="CMD_VC_CODE_RESP"       desc="获取验证码请求返回" />
+
+    <!--注册账号-->
+    <entry name="ClientRegisterReq"       type="ClientRegisterReq"        id="CMD_REGISTER_REQ"        desc="注册账号请求" />
+    <entry name="ClientRegisterResp"      type="ClientRegisterResp"       id="CMD_REGISTER_RESP"       desc="注册账号返回" />
+
+    <!--用户名登录-->
+    <entry name="ClientNameLogonReq"       type="ClientNameLogonReq"        id="CMD_NAME_LOGON_REQ"        desc="使用用户名登录请求" />
+    <entry name="ClientNameLogonResp"      type="ClientNameLogonResp"       id="CMD_NAME_LOGON_RESP"       desc="使用用户名登录返回" />
+
+    <!-- 用户基本信息 -->
+    <entry name="ClientBaseInfoReq" 			type="ClientBaseInfoReq"				id="CMD_BASE_INFO_REQ"  			desc="用户基本信息请求"/>
+    <entry name="ClientBaseInfoResp" 			type="ClientBaseInfoResp"				id="CMD_BASE_INFO_RESP"  			desc="用户基本信息应答"/>
+
+    <!-- 用户更新基本信息 -->
+    <entry name="ClientUpdateBaseInfoReq" 			type="ClientUpdateBaseInfoReq"				id="CMD_UPDATE_BASE_INFO_REQ"  			desc="用户更新基本信息请求"/>
+    <entry name="ClientUpdateBaseInfoResp"			type="ClientUpdateBaseInfoResp"			id="CMD_UPDATE_BASE_INFO_RESP"				desc="用户更新基本信息应答"/>
+
+
+
+
+    <!--创建订单 -->
+    <entry name="ClientRequestAccessTradeCreateOrder"       type="ClientRequestAccessTradeCreateOrder"        id="CLIENT_REQUEST_ACCESS_TRADE_CREATE_ORDER"        desc="客户端请求网关交易服务器创建订单" />
+    <entry name="TradeResponseAccessClientCreateOrder"      type="TradeResponseAccessClientCreateOrder"       id="TRADE_RSPONSE_ACCESS_CLIENT_CREATE_ORDER"       desc="交易服务器回应网关客户端创建订单" />
+
+    <!--查询订单基本信息 -->
+    <entry name="ClientRequestAccessTradeSelectOrderBasicInfo"       type="ClientRequestAccessTradeSelectOrderBasicInfo"        id="CLIENT_REQUEST_ACCESS_TRADE_SELECT_ORDER_BASIC_INFO"        desc="客户端请求网关交易服务器查询订单基本信息" />
+    <entry name="TradeResponseAccessClientSelectOrderBasicInfo"      type="TradeResponseAccessClientSelectOrderBasicInfo"       id="TRADE_RSPONSE_ACCESS_CLIENT_SELECT_ORDER_BASIC_INFO"       desc="交易服务器回应网关客户端查询订单基本信息" />
+
+    <!--查询订单详细信息 -->
+    <entry name="ClientRequestAccessTradeSelectOrderSpecificInfo"       type="ClientRequestAccessTradeSelectOrderSpecificInfo"        id="CLIENT_REQUEST_ACCESS_TRADE_SELECT_ORDER_SPECIFIC_INFO"       desc="客户端请求网关交易服务器查询订单详细信息" />
+    <entry name="TradeResponseAccessClientSelectOrderSpecificInfo"      type="TradeResponseAccessClientSelectOrderSpecificInfo"       id="TRADE_RSPONSE_ACCESS_CLIENT_SELECT_ORDER_SPECIFIC_INFO"       desc="交易服务器回应网关客户端查询订单详细信息" />
+
+
+
+    <!--用户登录聊天服务器-->
+    <entry name="ClientChatLogonReq"       type="ClientChatLogonReq"        id="CMD_CHAT_LOGON_REQ"        desc="用户登录聊天服务器请求" />
+    <entry name="ClientChatLogonResp"      type="ClientChatLogonResp"       id="CMD_CHAT_LOGON_RESP"       desc="用户登录聊天服务器返回" />
+
+    <!--用户发聊天消息-->
+    <entry name="ClientChatSendMsgReq"       type="ClientChatSendMsgReq"        id="CMD_CHAT_SEND_MSG_REQ"        desc="发送者用户发聊天消息请求" />
+    <entry name="ClientChatSendMsgResp"      type="ClientChatSendMsgResp"       id="CMD_CHAT_SEND_MSG_RESP"       desc="发送者用户发聊天消息返回" />
+
+    <!--接收者用户接收聊天消息-->
+    <entry name="ClientChatsvrForwardMsg"       type="ClientChatsvrForwardMsg"        id="CMD_CHATSVR_FORWARD_MSG"        desc="聊天服务器转发聊天消息" />
+    <!-- entry name="ClientChatsvrForwardMsgResp"      type="ClientChatsvrForwardMsgResp"       id="CMD_CHATSVR_FORWARD_MSG_RESP"       desc="聊天服务器转发聊天消息 响应" / -->
+
+  </union>
+
+  <!--与客户端通信包体-->
+  <struct name="ClientPkg" version="1" sizeinfo="Head.DataSize">
+    <entry name="Head"                  type="ClientPkgHead"            desc="包头"/>
+    <entry name="Body"                  type="ClientPkgBody"            select="Head.CmdID"     desc="包体" />
+  </struct>
+
+</metalib>

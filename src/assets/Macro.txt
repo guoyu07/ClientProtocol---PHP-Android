@@ -1,0 +1,14 @@
+﻿package com.youwo.network.domian;
+/**
+*Macro 字段
+*/ 
+public class Macro
+{
+<<macro>>
+}
+
+<<<macro>>>
+	/**
+	*@macros_desc
+	**/
+	public static int @macros_name = @macros_value;
